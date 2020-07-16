@@ -48,7 +48,8 @@ func (u *UdpProvider) StopService() {
 		u.upConnPool.Pool.RemoveAll()
 	}
 }
-func (u *UdpProvider) Start(args interface{}) (err error) {
+func (u *UdpProvider) Start(args interface{}) {
+	var err error
 	u.args = args.(UDPArgs)
 	if u.args.Parent != "" {
 		log.Printf("use %s parent %s", u.args.ParentType, u.args.Parent)
@@ -64,10 +65,12 @@ func (u *UdpProvider) Start(args interface{}) (err error) {
 	u.server = &sc
 	err = sc.ListenUDP(u.callback)
 	if err != nil {
-		return
+		log.Fatalf("listen udp on %s:%s error:%s",host,port,err.Error())
 	}
 	log.Printf("udp proxy on %s", (*sc.UDPListener).LocalAddr())
-	return
+
+	utils.WaitSignal()
+	u.Stop()
 }
 
 func (u *UdpProvider) Clean() {

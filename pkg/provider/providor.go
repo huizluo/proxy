@@ -2,7 +2,7 @@ package provider
 
 type Provider interface {
 	GetName()string
-	Start(args interface{})error
+	Start(args interface{})
 	Stop()
 }
 

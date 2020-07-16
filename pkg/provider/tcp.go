@@ -7,6 +7,7 @@ import (
 	"net"
 	"proxy/pkg/conn"
 	server2 "proxy/pkg/server"
+	"proxy/pkg/utils"
 	"runtime/debug"
 	"strconv"
 	"time"
@@ -33,7 +34,8 @@ func (t *TcpProvider) Stop() {
 	t.StopService()
 }
 
-func (t *TcpProvider) Start(args interface{}) (err error) {
+func (t *TcpProvider) Start(args interface{}) {
+	var err error
 	t.args = args.(TCPArgs)
 	if t.args.Parent != "" {
 		log.Printf("use %s parent %s", t.args.ParentType, t.args.Parent)
@@ -52,10 +54,13 @@ func (t *TcpProvider) Start(args interface{}) (err error) {
 		err = sc.ListenTls(t.args.CertBytes, t.args.KeyBytes, t.handler)
 	}
 	if err != nil {
-		return
+		log.Fatalf("listen tcp on addr  %s %s error: %s", host, port,err.Error())
 	}
+
 	log.Printf("%s proxy on %s", t.args.Protocol(), (*sc.Listener).Addr())
-	return
+
+	utils.WaitSignal()
+	t.Stop()
 }
 
 func (t *TcpProvider) InitService() {

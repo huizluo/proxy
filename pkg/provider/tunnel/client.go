@@ -41,7 +41,7 @@ func (s *TunnelClient) GetName()string {
 }
 func (s *TunnelClient) Stop() {
 }
-func (s *TunnelClient) Start(args interface{}) (err error) {
+func (s *TunnelClient) Start(args interface{}){
 	s.cfg = args.(TunnelClientArgs)
 	s.Check()
 	s.InitService()

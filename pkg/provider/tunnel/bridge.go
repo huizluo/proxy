@@ -50,7 +50,8 @@ func (s *TunnelBridge) GetName()string {
 func (s *TunnelBridge) Stop() {
 
 }
-func (s *TunnelBridge) Start(args interface{}) (err error) {
+func (s *TunnelBridge) Start(args interface{}) {
+	var err error
 	s.cfg = args.(TunnelBridgeArgs)
 	s.Check()
 	s.InitService()
@@ -101,7 +102,7 @@ func (s *TunnelBridge) Start(args interface{}) (err error) {
 		return
 	}
 	log.Printf("proxy on tunnel bridge mode %s", (*sc.Listener).Addr())
-	return
+	utils.WaitSignal()
 }
 
 func (s *TunnelBridge) ClientConn(inConn *net.Conn, key string) {

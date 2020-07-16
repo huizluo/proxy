@@ -2,7 +2,10 @@ package utils
 
 import (
 	"log"
+	"os"
+	"os/signal"
 	"runtime/debug"
+	"syscall"
 )
 
 func GoWithRecover(handler func(),recoverHandler func()){
@@ -29,4 +32,18 @@ func WithRecover(handler func(),recoverHandler func()){
 		}
 	}()
 	handler()
+}
+
+func WaitSignal(){
+	sig:=make(chan os.Signal,1)
+	signal.Notify(sig,
+		os.Interrupt,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT,
+		)
+
+	res,_:=<-sig
+	log.Printf("proxy received [%s] ,service will closed",res.String())
 }

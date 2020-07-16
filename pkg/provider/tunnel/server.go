@@ -11,6 +11,7 @@ import (
 	"proxy/pkg/conn"
 	"proxy/pkg/provider"
 	server2 "proxy/pkg/server"
+	"proxy/pkg/utils"
 	"runtime/debug"
 	"strconv"
 	"strings"
@@ -55,7 +56,8 @@ func (s *TunnelServer) GetName() string{
 }
 func (s *TunnelServer) Stop() {
 }
-func (s *TunnelServer) Start(args interface{}) (err error) {
+func (s *TunnelServer) Start(args interface{}) {
+	var err error
 	s.cfg = args.(TunnelServerArgs)
 	s.Check()
 	s.InitService()
@@ -108,7 +110,7 @@ func (s *TunnelServer) Start(args interface{}) (err error) {
 		}
 		log.Printf("proxy on tunnel server mode %s", (*s.sc.Listener).Addr())
 	}
-	return
+	utils.WaitSignal()
 }
 
 func (s *TunnelServer) GetOutConn() (outConn net.Conn, err error) {

@@ -17,20 +17,27 @@ func PathExists(_path string) bool {
 }
 //Keygen gen ssl key and crt
 func Keygen() (err error) {
-	cmd := exec.Command("sh", "-c", "openssl genrsa -out proxy.key 2048")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("err:%s", err)
-		return
+	_,err=os.Stat("cert")
+	if os.IsNotExist(err){
+		if err = os.Mkdir("cert",os.ModePerm);err!=nil{
+			return err
+		}
+
+		cmd := exec.Command("sh", "-c", "openssl genrsa -out cert/proxy.key 2048")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Printf("err:%s", err)
+			return err
+		}
+		fmt.Println(string(out))
+		cmd = exec.Command("sh", "-c", `openssl req -new -key cert/proxy.key -x509 -days 3650 -out cert/proxy.crt -subj /C=CN/ST=BJ/O="Localhost Ltd"/CN=proxy`)
+		out, err = cmd.CombinedOutput()
+		if err != nil {
+			log.Printf("err:%s", err)
+			return err
+		}
+		fmt.Println(string(out))
 	}
-	fmt.Println(string(out))
-	cmd = exec.Command("sh", "-c", `openssl req -new -key proxy.key -x509 -days 3650 -out proxy.crt -subj /C=CN/ST=BJ/O="Localhost Ltd"/CN=proxy`)
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("err:%s", err)
-		return
-	}
-	fmt.Println(string(out))
 	return
 }
 //GetAllInterfaceAddr

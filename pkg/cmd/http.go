@@ -31,18 +31,10 @@ func NewHttpCmd()*cobra.Command{
 	// httpCmd represents the http command
 	httpCmd := &cobra.Command{
 		Use:   "http",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Short: "run a http proxy server",
+		Long: `run a http proxy server`,
 		Run: func(cmd *cobra.Command, args []string) {
-			if err:=pro.Start(o);err!=nil{
-				fmt.Errorf("run http proxy fail,err: %s",err.Error())
-				return
-			}
+			pro.Start(o)
 			fmt.Println("http called")
 		},
 	}
@@ -63,8 +55,4 @@ to quickly create a Cobra application.`,
 	httpCmd.Flags().IntVarP(&o.CheckParentInterval,"check-parent-interval","I",3,"check if proxy is okay every interval seconds,zero: means no check")
 
 	return httpCmd
-}
-
-func init() {
-	rootCmd.AddCommand(NewHttpCmd())
 }

@@ -26,7 +26,7 @@ func (h httpProvider) GetName() string {
 	return h.name
 }
 
-func (h httpProvider) Start(args interface{}) (err error) {
+func (h httpProvider) Start(args interface{}){
 	log.Printf("http provider start")
 	h.args = args.(HTTPArgs)
 	if h.args.Parent!=""{
@@ -48,7 +48,10 @@ func (h httpProvider) Start(args interface{}) (err error) {
 	if err == nil{
 		log.Printf("%s http(s) proxy on %s",h.args.LocalType,(*server.Listener).Addr())
 	}
-	return
+
+	utils.WaitSignal()
+
+	h.Stop()
 }
 
 func (h httpProvider) Stop() {
@@ -95,7 +98,6 @@ func (h httpProvider) handler(inConn net.Conn){
 		}
 		//var n, m uint
 		useProxy, _, _ = h.checker.IsBlocked(req.Host)
-		//log.Printf("blocked ? : %v, %s , fail:%d ,success:%d", useProxy, address, n, m)
 	}
 	log.Printf("use proxy : %v, %s", useProxy, address)
 	//os.Exit(0)

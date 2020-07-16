@@ -68,11 +68,21 @@ func init() {
 
 	rootCmd.Flags().StringVarP(&baseArgs.Parent,"parent","P","","parent address, such as: \"23.32.32.19:28008\"")
 	rootCmd.Flags().StringVarP(&baseArgs.Local,"local","p",":30080","local listen addr ip:port")
-	rootCmd.Flags().StringVarP(&certPath,"cert","C","proxy.crt","tls cert file")
-	rootCmd.Flags().StringVarP(&keyPath,"key","K","proxy.key","tls private key file")
-	//crtBytes,keyBytes:=readTlsKeyFile()
-	//baseArgs.CertBytes = crtBytes
-	//baseArgs.KeyBytes = keyBytes
+	rootCmd.Flags().StringVarP(&certPath,"cert","C","cert/proxy.crt","tls cert file")
+	rootCmd.Flags().StringVarP(&keyPath,"key","K","cert/proxy.key","tls private key file")
+	crtBytes,keyBytes:=readTlsKeyFile()
+	baseArgs.CertBytes = crtBytes
+	baseArgs.KeyBytes = keyBytes
+
+	rootCmd.AddCommand(NewHttpCmd())
+	rootCmd.AddCommand(NewTcpCmd())
+	rootCmd.AddCommand(NewUdpCmd())
+
+	tunnelCmd:=NewTunnelCmd()
+	tunnelCmd.AddCommand(NewTunnelClientCmd())
+	tunnelCmd.AddCommand(NewTunnelServerCmd())
+	tunnelCmd.AddCommand(NewTunnelBridgeCmd())
+	rootCmd.AddCommand(tunnelCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
